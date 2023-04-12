@@ -2,8 +2,8 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from kadem.proto import ping_request_pb2 as kadem_dot_proto_dot_ping__request__pb2
-from kadem.proto import ping_response_pb2 as kadem_dot_proto_dot_ping__response__pb2
+from . import ping_request_pb2 as ping__request__pb2
+from . import ping_response_pb2 as ping__response__pb2
 
 
 class HashNodeStub(object):
@@ -17,8 +17,8 @@ class HashNodeStub(object):
         """
         self.Ping = channel.unary_unary(
                 '/HashNode/Ping',
-                request_serializer=kadem_dot_proto_dot_ping__request__pb2.PingRequest.SerializeToString,
-                response_deserializer=kadem_dot_proto_dot_ping__response__pb2.PingResponse.FromString,
+                request_serializer=ping__request__pb2.PingRequest.SerializeToString,
+                response_deserializer=ping__response__pb2.PingResponse.FromString,
                 )
 
 
@@ -36,8 +36,8 @@ def add_HashNodeServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'Ping': grpc.unary_unary_rpc_method_handler(
                     servicer.Ping,
-                    request_deserializer=kadem_dot_proto_dot_ping__request__pb2.PingRequest.FromString,
-                    response_serializer=kadem_dot_proto_dot_ping__response__pb2.PingResponse.SerializeToString,
+                    request_deserializer=ping__request__pb2.PingRequest.FromString,
+                    response_serializer=ping__response__pb2.PingResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -61,7 +61,7 @@ class HashNode(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/HashNode/Ping',
-            kadem_dot_proto_dot_ping__request__pb2.PingRequest.SerializeToString,
-            kadem_dot_proto_dot_ping__response__pb2.PingResponse.FromString,
+            ping__request__pb2.PingRequest.SerializeToString,
+            ping__response__pb2.PingResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

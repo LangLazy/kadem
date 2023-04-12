@@ -1,3 +1,3 @@
 from hashNode import hashNode
 
-h = hashNode("[::]", "1", 50051)
+h = hashNode.HashNode("[::]", "1", 50051)

@@ -1,7 +1,7 @@
 syntax = "proto3";
 
-import "kadem/proto/ping_request.proto";
-import "kadem/proto/ping_response.proto";
+import "ping_request.proto";
+import "ping_response.proto";
 
 
 service HashNode{

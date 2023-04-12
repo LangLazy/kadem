@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+import "ping_request.proto";
+import "ping_response.proto";
+
+
+service HashNode{
+    rpc Ping(PingRequest) returns (PingResponse) {}
+}

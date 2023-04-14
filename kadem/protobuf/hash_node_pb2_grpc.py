@@ -4,6 +4,8 @@ import grpc
 
 from . import ping_request_pb2 as ping__request__pb2
 from . import ping_response_pb2 as ping__response__pb2
+from . import store_request_pb2 as store__request__pb2
+from . import store_response_pb2 as store__response__pb2
 
 
 class HashNodeStub(object):
@@ -20,12 +22,23 @@ class HashNodeStub(object):
                 request_serializer=ping__request__pb2.PingRequest.SerializeToString,
                 response_deserializer=ping__response__pb2.PingResponse.FromString,
                 )
+        self.Store = channel.unary_unary(
+                '/HashNode/Store',
+                request_serializer=store__request__pb2.StoreRequest.SerializeToString,
+                response_deserializer=store__response__pb2.StoreResponse.FromString,
+                )
 
 
 class HashNodeServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def Ping(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Store(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -38,6 +51,11 @@ def add_HashNodeServicer_to_server(servicer, server):
                     servicer.Ping,
                     request_deserializer=ping__request__pb2.PingRequest.FromString,
                     response_serializer=ping__response__pb2.PingResponse.SerializeToString,
+            ),
+            'Store': grpc.unary_unary_rpc_method_handler(
+                    servicer.Store,
+                    request_deserializer=store__request__pb2.StoreRequest.FromString,
+                    response_serializer=store__response__pb2.StoreResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -63,5 +81,22 @@ class HashNode(object):
         return grpc.experimental.unary_unary(request, target, '/HashNode/Ping',
             ping__request__pb2.PingRequest.SerializeToString,
             ping__response__pb2.PingResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def Store(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/HashNode/Store',
+            store__request__pb2.StoreRequest.SerializeToString,
+            store__response__pb2.StoreResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

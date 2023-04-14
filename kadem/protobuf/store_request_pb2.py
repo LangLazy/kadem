@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13store_request.proto\"_\n\x0cStoreRequest\x12\x0f\n\x07node_ip\x18\x03 \x01(\t\x12\x11\n\tnode_port\x18\x04 \x01(\r\x12\x0f\n\x07node_id\x18\x05 \x01(\t\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\tb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13store_request.proto\"*\n\x0cStoreRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\tb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'store_request_pb2', globals())
@@ -21,5 +21,5 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   _STOREREQUEST._serialized_start=23
-  _STOREREQUEST._serialized_end=118
+  _STOREREQUEST._serialized_end=65
 # @@protoc_insertion_point(module_scope)

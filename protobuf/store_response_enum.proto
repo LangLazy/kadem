@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+enum StoreResult {
+    STORE_SUCCESSFUL = 0;
+    STORE_FAILED = 1;
+}

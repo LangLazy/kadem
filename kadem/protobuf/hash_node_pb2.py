@@ -13,17 +13,15 @@ _sym_db = _symbol_database.Default()
 
 from . import ping_request_pb2 as ping__request__pb2
 from . import ping_response_pb2 as ping__response__pb2
-from . import store_request_pb2 as store__request__pb2
-from . import store_response_pb2 as store__response__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0fhash_node.proto\x1a\x12ping_request.proto\x1a\x13ping_response.proto\x1a\x13store_request.proto\x1a\x14store_response.proto2[\n\x08HashNode\x12%\n\x04Ping\x12\x0c.PingRequest\x1a\r.PingResponse\"\x00\x12(\n\x05Store\x12\r.StoreRequest\x1a\x0e.StoreResponse\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0fhash_node.proto\x1a\x12ping_request.proto\x1a\x13ping_response.proto21\n\x08HashNode\x12%\n\x04Ping\x12\x0c.PingRequest\x1a\r.PingResponse\"\x00\x62\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'hash_node_pb2', globals())
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
-  _HASHNODE._serialized_start=103
-  _HASHNODE._serialized_end=194
+  _HASHNODE._serialized_start=60
+  _HASHNODE._serialized_end=109
 # @@protoc_insertion_point(module_scope)

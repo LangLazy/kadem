@@ -1,0 +1,7 @@
+syntax = "proto3";
+import "store_response_enum.proto";
+
+message StoreResponse {
+    StoreResult result = 1;
+    string message = 2;
+}

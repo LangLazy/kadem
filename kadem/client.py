@@ -12,4 +12,24 @@ from routingTable import routingTable
 # newId = int.from_bytes(hashlib.sha1("large".encode()).digest(), "little")
 # print((0>>160)^((1<<160)>>160))
 table = routingTable.RoutingTable(0, 3)
-table.insertNewNode(1<<160)
+# table.insertNewNode(1)
+table.insertNewNode(2)
+
+
+# bitMask = 1
+
+# number1 = 1
+# number2 = 3
+# movement = ~(number1^number2)
+
+# i = 0
+# while movement&bitMask:
+#     # print(bin(number1), bin(number2))
+#     # number2 = number2 >>1
+#     # number1 = number1 >>1
+#     # print(number1&bitMask, number2&bitMask, "----", i)
+#     # i += 1
+#     # if i > 5:
+#         # break
+#     print("sad")
+#     movement >>= 1

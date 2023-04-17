@@ -1,4 +1,16 @@
 from dataStructures import treeNode
+from collections import deque 
+
+def getBinary(num, digs):
+    ans = ""
+    mask = 1
+    for i in range(digs):
+        if num&mask == 0:
+            ans += "0"
+        else:
+            ans += "1"
+        num>>1
+    return ans[::-1]
 
 class RoutingTable:
     #id - 160 bit sha1 id
@@ -8,17 +20,38 @@ class RoutingTable:
         self.k = k
         self.root = treeNode.TreeNode(True, k, self.id)
     
+    def __str__(self):
+        q = deque([self.root])
+        s = ""
+        while q:
+            for i in range(len(q)):
+                cur = q.popleft()
+                if cur.bucket:
+                    s += "B "
+                else:
+                    s +="O "
+                if cur.left:
+                    q.append(cur.left)
+                if cur.right:
+                    q.append(cur.right)
+            s+="\n"
+        return s
+    
     def insertNewNode(self, id : int) -> None:
         if id == self.id:
             print("Why am I adding myself")
             return
         currentNode = self.root
         parent = None
-        #need to keep track of parent as that where the break happens, exceptional case for when root gets split
+        movementBits = ~(id^self.id) #0 if bits were not same, else 1
+        bitMask = 1
         currentInsertIdBit = id
-        currentIdBit = self.id
-        while not (currentIdBit>>160)^(currentInsertIdBit>>160):
-            moveBit = currentInsertIdBit>>160
+        while bitMask&movementBits == 1:
+            moveBit = bitMask&currentInsertIdBit
+            print(bin(currentInsertIdBit), moveBit)
+            print("=====================")
+            print(self)
+            print("=====================")
             if (moveBit and not currentNode.right) or (not moveBit and not currentNode.left) :
                 if parent:
                     newLeaf = treeNode.TreeNode(True, self.k, -1)
@@ -34,7 +67,7 @@ class RoutingTable:
                         parent.right = newSubRoot
                     else:
                         parent.left = newSubRoot
-                    currentNode = newSubRoot
+                    parent = newSubRoot
                 else:
                     newRoot = treeNode.TreeNode(False, self.k, 0)
                     newLeaf = treeNode.TreeNode(True, self.k, -1) #idk how to do the prefix thing rn
@@ -45,25 +78,24 @@ class RoutingTable:
                     else:
                         newRoot.left = currentNode
                         newRoot.right = newLeaf
-            parent = currentNode
-            currentInsertIdBit << 1
-            currentIdBit << 1
-            if moveBit:
-                currentNode = currentNode.right
-            else:
-                currentNode = currentNode.left
-        moveBit = currentInsertIdBit>>160
+                    parent = newRoot
+            movementBits >>= 1
+            currentInsertIdBit >>= 1
+        #will leave you at the node you last agreed on!
+        moveBit = bitMask&currentInsertIdBit
         if parent:
-            if moveBit:
-                if parent.right:
-                    parent.right.bucket.append(id)
-                else:
-                    parent.right = treeNode.TreeNode(True, self.k, id)
+            newSubRoot = treeNode.TreeNode(False, self.k, 0)
+            newLeaf = treeNode.TreeNode(True, self.k, id)
+            if parent.right is currentNode:
+                parent.right = newSubRoot
             else:
-                if parent.left:
-                    parent.left.bucket.append(id)
-                else:
-                    parent.left = treeNode.TreeNode(True, self.k, id)
+                parent.left = newSubRoot
+            if moveBit:
+                newSubRoot.right = currentNode
+                newSubRoot.left = newLeaf
+            else:
+                newSubRoot.left = currentNode
+                newSubRoot.right = newLeaf
         else:
             newRoot = treeNode.TreeNode(False, self.k, 0)
             newLeaf = treeNode.TreeNode(True, self.k, id)
@@ -74,7 +106,9 @@ class RoutingTable:
             else:
                 newRoot.right = currentNode
                 newRoot.left = newLeaf
-
+        print("=====================")
+        print(self)
+        print("=====================")
         #while msb the same
             #if the appropraite direction is availavble (1 -> right, 0 left)
                 #move in that direction and shift the bits as needed

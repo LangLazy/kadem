@@ -52,7 +52,8 @@ class RoutingTable:
             print("=====================")
             print(self)
             print("=====================")
-            if (moveBit and not currentNode.right) or (not moveBit and not currentNode.left) :
+            #TODO seperate insertion and traversal instead of doing both at the same time its really confusing right now
+            if (moveBit and not currentNode.right) or (not moveBit and not currentNode.left) : #TODO NEED TO ADD THE traversal version of this (no insertion)
                 if parent:
                     newLeaf = treeNode.TreeNode(True, self.k, -1)
                     newSubRoot  = treeNode.TreeNode(False, self.k, -1)

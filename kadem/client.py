@@ -13,7 +13,7 @@ from routingTable import routingTable
 # print((0>>160)^((1<<160)>>160))
 table = routingTable.RoutingTable(0, 3)
 # table.insertNewNode(1)
-table.insertNewNode(2)
+table.insertNewNode(1<<3)
 
 
 # bitMask = 1

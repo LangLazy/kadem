@@ -48,10 +48,6 @@ class RoutingTable:
         currentInsertIdBit = id
         while bitMask&movementBits == 1:
             moveBit = bitMask&currentInsertIdBit
-            print(bin(currentInsertIdBit), moveBit)
-            print("=====================")
-            print(self)
-            print("=====================")
             #TODO seperate insertion and traversal instead of doing both at the same time its really confusing right now
             if (moveBit and not currentNode.right) or (not moveBit and not currentNode.left) : #TODO NEED TO ADD THE traversal version of this (no insertion)
                 if parent:
@@ -107,10 +103,7 @@ class RoutingTable:
             else:
                 newRoot.right = currentNode
                 newRoot.left = newLeaf
-        print("=====================")
-        print(self)
-        print("=====================")
-        #while msb the same
+        #while lsb the same
             #if the appropraite direction is availavble (1 -> right, 0 left)
                 #move in that direction and shift the bits as needed
             #else

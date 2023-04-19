@@ -49,34 +49,26 @@ class RoutingTable:
     def __splitParent(self, moveBit : int, parent : treeNode.TreeNode, currentNode : treeNode.TreeNode) -> treeNode.TreeNode:
         newLeaf = treeNode.TreeNode(True, self.k)
         newRoot  = treeNode.TreeNode(False, self.k)
-        if parent:
-            if moveBit:
-                newRoot.right = currentNode
-                newRoot.left = newLeaf
-            else:
-                newRoot.left = currentNode
-                newRoot.right = newLeaf
-            if parent.right is currentNode:
-                parent.right = newRoot
-            else:
-                parent.left = newRoot
+        if moveBit:
+            newRoot.right = currentNode
+            newRoot.left = newLeaf
         else:
-            self.root = newRoot
-            if moveBit:
-                newRoot.right = currentNode
-                newRoot.left = newLeaf
-            else:
-                newRoot.left = currentNode
-                newRoot.right = newLeaf
+            newRoot.left = currentNode
+            newRoot.right = newLeaf
+        if parent.right is currentNode:
+            parent.right = newRoot
+        else:
+            parent.left = newRoot
         return newRoot
 
-    def __generatePath(self, id) -> None:
-        currentNode = self.root
-        parent = None
-        movementBits = ~(id^self.id) #0 if bits were not same, else 1
+    def __generatePath(self, newId : int) -> None:
+        parent = self.root
+        currentNode = parent.left
+        if self.id&1 == 1:
+            currentNode = parent.right
+        movementBits = ~(newId^self.id) #0 if bits were not same, else 1
         bitMask = 1
-        currentInsertIdBit = id
-
+        currentInsertIdBit = newId
         while bitMask&movementBits == 1:
             moveBit = bitMask&currentInsertIdBit
             if (moveBit and not currentNode.right) or (not moveBit and not currentNode.left):
@@ -89,17 +81,8 @@ class RoutingTable:
                     currentNode = currentNode.left
             movementBits >>= 1
             currentInsertIdBit >>= 1
-
-        #at the node which id to be inserted diverges from HashNode(server) id
-        moveBit = bitMask&currentInsertIdBit
-        if (moveBit and not currentNode.right) or (not moveBit and not currentNode.left):
-            parent = self.__splitParent(moveBit, parent, currentNode)
-        else:
-            parent = currentNode
-            if moveBit:
-                currentNode = currentNode.right
-            else:
-                currentNode = currentNode.left
+        #Current Node at this point will be the node in which after following the appropriate direction down will have the kbucket
+        #Essentially this Node represents the longest common suffix of the HashNode id and the inserted id
 
     def __kBucketInsert(self, id) -> None:
         pass

@@ -18,7 +18,16 @@ class RoutingTable:
     def __init__(self, id : int, k : int) -> None:
         self.id = id
         self.k = k
-        self.root = treeNode.TreeNode(True, k, self.id)
+        self.root = treeNode.TreeNode(False, k)
+        holder = treeNode.TreeNode(True, k)
+        notHolder = treeNode.TreeNode(True, k)
+        if id&1 == 1:
+            self.root.right = holder
+            self.root.left = notHolder
+        else:
+            self.root.right = notHolder
+            self.root.left = holder
+        holder.insert(id)
     
     def __str__(self):
         q = deque([self.root])
@@ -26,7 +35,7 @@ class RoutingTable:
         while q:
             for i in range(len(q)):
                 cur = q.popleft()
-                if cur.bucket:
+                if cur.leafHuh:
                     s += "B "
                 else:
                     s +="O "
@@ -37,87 +46,87 @@ class RoutingTable:
             s+="\n"
         return s
     
-    def insertNewNode(self, id : int) -> None:
-        if id == self.id:
-            print("Why am I adding myself")
-            return
+    def __splitParent(self, moveBit : int, parent : treeNode.TreeNode, currentNode : treeNode.TreeNode) -> treeNode.TreeNode:
+        newLeaf = treeNode.TreeNode(True, self.k)
+        newRoot  = treeNode.TreeNode(False, self.k)
+        if parent:
+            if moveBit:
+                newRoot.right = currentNode
+                newRoot.left = newLeaf
+            else:
+                newRoot.left = currentNode
+                newRoot.right = newLeaf
+            if parent.right is currentNode:
+                parent.right = newRoot
+            else:
+                parent.left = newRoot
+        else:
+            self.root = newRoot
+            if moveBit:
+                newRoot.right = currentNode
+                newRoot.left = newLeaf
+            else:
+                newRoot.left = currentNode
+                newRoot.right = newLeaf
+        return newRoot
+
+    def __generatePath(self, id) -> None:
         currentNode = self.root
         parent = None
         movementBits = ~(id^self.id) #0 if bits were not same, else 1
         bitMask = 1
         currentInsertIdBit = id
+
         while bitMask&movementBits == 1:
             moveBit = bitMask&currentInsertIdBit
-            #TODO seperate insertion and traversal instead of doing both at the same time its really confusing right now
-            if (moveBit and not currentNode.right) or (not moveBit and not currentNode.left) : #TODO NEED TO ADD THE traversal version of this (no insertion)
-                if parent:
-                    newLeaf = treeNode.TreeNode(True, self.k, -1)
-                    newSubRoot  = treeNode.TreeNode(False, self.k, -1)
-                    if moveBit:
-                        newSubRoot.right = currentNode
-                        newSubRoot.left = newLeaf
-                    else:
-                        newSubRoot.left = currentNode
-                        newSubRoot.right = newLeaf
-                    shiftedRight = parent.right is currentNode
-                    if shiftedRight:
-                        parent.right = newSubRoot
-                    else:
-                        parent.left = newSubRoot
-                    parent = newSubRoot
+            if (moveBit and not currentNode.right) or (not moveBit and not currentNode.left):
+                parent = self.__splitParent(moveBit, parent, currentNode)
+            else:
+                parent = currentNode
+                if moveBit:
+                    currentNode = currentNode.right
                 else:
-                    newRoot = treeNode.TreeNode(False, self.k, 0)
-                    newLeaf = treeNode.TreeNode(True, self.k, -1) #idk how to do the prefix thing rn
-                    self.root = newRoot
-                    if moveBit:
-                        newRoot.right = currentNode
-                        newRoot.left = newLeaf
-                    else:
-                        newRoot.left = currentNode
-                        newRoot.right = newLeaf
-                    parent = newRoot
+                    currentNode = currentNode.left
             movementBits >>= 1
             currentInsertIdBit >>= 1
-        #will leave you at the node you last agreed on!
+
+        #at the node which id to be inserted diverges from HashNode(server) id
         moveBit = bitMask&currentInsertIdBit
-        if parent:
-            newSubRoot = treeNode.TreeNode(False, self.k, 0)
-            newLeaf = treeNode.TreeNode(True, self.k, id)
-            if parent.right is currentNode:
-                parent.right = newSubRoot
-            else:
-                parent.left = newSubRoot
-            if moveBit:
-                newSubRoot.right = currentNode
-                newSubRoot.left = newLeaf
-            else:
-                newSubRoot.left = currentNode
-                newSubRoot.right = newLeaf
+        if (moveBit and not currentNode.right) or (not moveBit and not currentNode.left):
+            parent = self.__splitParent(moveBit, parent, currentNode)
         else:
-            newRoot = treeNode.TreeNode(False, self.k, 0)
-            newLeaf = treeNode.TreeNode(True, self.k, id)
-            self.root = newRoot
+            parent = currentNode
             if moveBit:
-                newRoot.left = currentNode
-                newRoot.right = newLeaf
+                currentNode = currentNode.right
             else:
-                newRoot.right = currentNode
-                newRoot.left = newLeaf
-        #while lsb the same
-            #if the appropraite direction is availavble (1 -> right, 0 left)
-                #move in that direction and shift the bits as needed
+                currentNode = currentNode.left
+
+    def __kBucketInsert(self, id) -> None:
+        pass
+
+    def insertNewNode(self, id : int) -> None:
+        if id == self.id:
+            raise Exception("Why am I adding myself?!")
+        self.__generatePath(id)
+        self.__kBucketInsert(id)
+        #The Bucket Splitting Algorithm Psuedo code
+        #While LSB (Least Significant Bit) is the same
+            #if the appropraite direction is available (1 -> right, 0 left)
+                #move in that direction
             #else
                 #this means you are at the lowest kbucket which has not been expanded yet
                 #you need to go to the parent change it to be a new intermediary
                 #split into 2 buckets
-                #move into the appropraite one
-        #u are at the first node which is in contention
-        #go up to parent
-            #if not parent 
-                #  you are at the root on first split and it differs at first bit
-                # make a new root node and split it, and go there and add ur self
+                #move into the appropriate one
+            #Shift current bit being looked at (>>)
+        #After exiting the loop, current node is first bit that is different between ServerId and the Id to be inserted
+        #Go up to parent - the path to this node is the longest shared prefix between the ServerId and the Id to be inserted
+            #if not parent (Current node is root - id's differ at first bit) 
+                # Make new parent and split and it
+                # Add to needed kBucket
             #else
-                #go up to parent and see if k bucklet exists, if yes add yourself if no make it and add yourself
+                # Go up to parent and see if k bucket exists
+                # If yes add yourself else make the node and bucket and add yourself
 
     def getKClosestNodes():
         pass

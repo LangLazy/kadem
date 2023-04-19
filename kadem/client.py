@@ -5,14 +5,16 @@ from protobuf import hash_node_pb2_grpc
 from protobuf import store_request_pb2
 from routingTable import routingTable
 
+# a = 0b0111
+# b = ((~a)&((1<<3)))|((~(1<<3))&a)
+# print(bin(b))
+
 # with grpc.insecure_channel('localhost:50051') as channel:
 #     stub = hash_node_pb2_grpc.HashNodeStub(channel)
 #     stub.Store(store_request_pb2.StoreRequest(key="asd", value="asdads", node_ip="[::]", node_port=50052, node_id="asdasdasd"))
 id = int.from_bytes(hashlib.sha1("gasdasasdfasdfasdfdasdasdasdasdamer".encode()).digest(), "little")
-almost =0b011001101110110000001110110111101111100010111110110111000100011000101000000100101010010110000100100111100110101011001111001010101111011000111110011110010100101
-print(bin(id), almost)
-# almost = ((~id)|0)|((~(1<<160))&id)
-# print(bin(almost))
+almost = ((~id)&((1<<159)))|((~(1<<159))&id)
+print(bin(almost), bin(id))
 table = routingTable.RoutingTable(id, 3)
 table.insertNewNode(almost)
 print(table)

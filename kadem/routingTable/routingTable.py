@@ -1,17 +1,6 @@
 from dataStructures import treeNode
 from collections import deque 
 
-def getBinary(num, digs):
-    ans = ""
-    mask = 1
-    for i in range(digs):
-        if num&mask == 0:
-            ans += "0"
-        else:
-            ans += "1"
-        num>>1
-    return ans[::-1]
-
 class RoutingTable:
     #id - 160 bit sha1 id
     #k - global paramter which represents bucket size
@@ -84,8 +73,16 @@ class RoutingTable:
         #Current Node at this point will be the node in which after following the appropriate direction down will have the kbucket
         #Essentially this Node represents the longest common suffix of the HashNode id and the inserted id
 
-    def __kBucketInsert(self, id) -> None:
-        pass
+    def __kBucketInsert(self, newId) -> None:
+        bitMask = 1
+        currentNode = self.root
+        while not currentNode.leafHuh:
+            if bitMask&newId:
+                currentNode = currentNode.right
+            else:
+                currentnode = currentNode.left
+            newId >>= 1
+        currentNode.insert(newId)
 
     def insertNewNode(self, id : int) -> None:
         if id == self.id:

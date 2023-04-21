@@ -80,7 +80,7 @@ class RoutingTable:
             if bitMask&newId:
                 currentNode = currentNode.right
             else:
-                currentnode = currentNode.left
+                currentNode = currentNode.left
             newId >>= 1
         currentNode.insert(newId)
 

@@ -14,3 +14,9 @@ class TreeNode:
         if not self.leafHuh:
             raise Exception(f"Trying to insert {id} into non leaf node")
         self.__bucket.insert(id)
+    
+    def isPresent(self, queryId):
+        return self.__bucket.isPresent(queryId)
+    
+    def printBucket(self):
+        return str(self.__bucket)

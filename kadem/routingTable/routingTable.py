@@ -1,11 +1,12 @@
 from dataStructures import treeNode
+from routingTable.selfAddException import SelfAddException
 from collections import deque 
 
 class RoutingTable:
     #id - 160 bit sha1 id
     #k - global paramter which represents bucket size
     def __init__(self, id : int, k : int) -> None:
-        self.id = id
+        self.id = id|(1<<160) #Important so that leading zeros do not disapear
         self.k = k
         self.root = treeNode.TreeNode(False, k)
         holder = treeNode.TreeNode(True, k)
@@ -16,24 +17,27 @@ class RoutingTable:
         else:
             self.root.right = notHolder
             self.root.left = holder
-        holder.insert(id)
+        holder.insert(self.id )
     
     def __str__(self):
         q = deque([self.root])
         s = ""
         while q:
-            for i in range(len(q)):
-                cur = q.popleft()
-                if cur.leafHuh:
-                    s += "B "
-                else:
-                    s +="O "
-                if cur.left:
-                    q.append(cur.left)
-                if cur.right:
+            cur = q.popleft()
+            if not (cur.left.leafHuh and cur.right.leafHuh):
+                if cur.left.leafHuh:
+                    s += "1"
                     q.append(cur.right)
-            s+="\n"
-        return s
+                else:
+                    s += "0"
+                    q.append(cur.left)
+            else: 
+                if cur.right.isPresent(self.id):
+                    s += "1"
+                else:
+                    s += "0"
+                break
+        return s[::-1]
     
     def __splitParent(self, moveBit : int, parent : treeNode.TreeNode, currentNode : treeNode.TreeNode) -> treeNode.TreeNode:
         newLeaf = treeNode.TreeNode(True, self.k)
@@ -76,17 +80,19 @@ class RoutingTable:
     def __kBucketInsert(self, newId) -> None:
         bitMask = 1
         currentNode = self.root
+        currentBit = newId
         while not currentNode.leafHuh:
-            if bitMask&newId:
+            if bitMask&currentBit:
                 currentNode = currentNode.right
             else:
-                currentnode = currentNode.left
-            newId >>= 1
+                currentNode = currentNode.left
+            currentBit >>= 1
         currentNode.insert(newId)
 
     def insertNewNode(self, id : int) -> None:
-        if id == self.id:
-            raise Exception("Why am I adding myself?!")
+        if (id|(1<<160)) == self.id:
+            #Need to add a 1 bit in the 161st position so that leading zeros are perserved
+            raise SelfAddException("Why am I adding myself?!")
         self.__generatePath(id)
         self.__kBucketInsert(id)
         #The Bucket Splitting Algorithm Psuedo code

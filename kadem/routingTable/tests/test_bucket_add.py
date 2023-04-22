@@ -14,7 +14,7 @@ def getLastBitStr(num : int) -> str:
     return bin(1&num)[2:] #ignore the 0b prefix for binary numbers
 
 def test_add():
-    tableId = 0b1111111111
+    tableId = 0b1111111111 #why does tableId = ~(1<11) not work, these should be the same?
     newId = 0
     table = rt.RoutingTable(tableId,3)
     table.insertNewNode(newId)

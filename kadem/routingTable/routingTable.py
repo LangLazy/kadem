@@ -6,7 +6,7 @@ class RoutingTable:
     #id - 160 bit sha1 id
     #k - global paramter which represents bucket size
     def __init__(self, id : int, k : int) -> None:
-        self.id = id
+        self.id = id|(1<<160) #Important so that leading zeros do not disapear
         self.k = k
         self.root = treeNode.TreeNode(False, k)
         holder = treeNode.TreeNode(True, k)
@@ -17,7 +17,7 @@ class RoutingTable:
         else:
             self.root.right = notHolder
             self.root.left = holder
-        holder.insert(id)
+        holder.insert(self.id )
     
     def __str__(self):
         q = deque([self.root])
@@ -90,7 +90,8 @@ class RoutingTable:
         currentNode.insert(newId)
 
     def insertNewNode(self, id : int) -> None:
-        if id == self.id:
+        if (id|(1<<160)) == self.id:
+            #Need to add a 1 bit in the 161st position so that leading zeros are perserved
             raise SelfAddException("Why am I adding myself?!")
         self.__generatePath(id)
         self.__kBucketInsert(id)

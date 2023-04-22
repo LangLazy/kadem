@@ -1,4 +1,5 @@
 from dataStructures import treeNode
+from routingTable.selfAddException import SelfAddException
 from collections import deque 
 
 class RoutingTable:
@@ -22,18 +23,21 @@ class RoutingTable:
         q = deque([self.root])
         s = ""
         while q:
-            for i in range(len(q)):
-                cur = q.popleft()
-                if cur.leafHuh:
-                    s += "B "
-                else:
-                    s +="O "
-                if cur.left:
-                    q.append(cur.left)
-                if cur.right:
+            cur = q.popleft()
+            if not (cur.left.leafHuh and cur.right.leafHuh):
+                if cur.left.leafHuh:
+                    s += "1"
                     q.append(cur.right)
-            s+="\n"
-        return s
+                else:
+                    s += "0"
+                    q.append(cur.left)
+            else: 
+                if cur.right.isPresent(self.id):
+                    s += "1"
+                else:
+                    s += "0"
+                break
+        return s[::-1]
     
     def __splitParent(self, moveBit : int, parent : treeNode.TreeNode, currentNode : treeNode.TreeNode) -> treeNode.TreeNode:
         newLeaf = treeNode.TreeNode(True, self.k)
@@ -76,17 +80,18 @@ class RoutingTable:
     def __kBucketInsert(self, newId) -> None:
         bitMask = 1
         currentNode = self.root
+        currentBit = newId
         while not currentNode.leafHuh:
-            if bitMask&newId:
+            if bitMask&currentBit:
                 currentNode = currentNode.right
             else:
                 currentNode = currentNode.left
-            newId >>= 1
+            currentBit >>= 1
         currentNode.insert(newId)
 
     def insertNewNode(self, id : int) -> None:
         if id == self.id:
-            raise Exception("Why am I adding myself?!")
+            raise SelfAddException("Why am I adding myself?!")
         self.__generatePath(id)
         self.__kBucketInsert(id)
         #The Bucket Splitting Algorithm Psuedo code

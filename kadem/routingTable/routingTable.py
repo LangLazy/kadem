@@ -20,23 +20,23 @@ class RoutingTable:
         holder.insert(self.id )
     
     def __str__(self):
-        q = deque([self.root])
         s = ""
-        while q:
-            cur = q.popleft()
-            if not (cur.left.leafHuh and cur.right.leafHuh):
-                if cur.left.leafHuh:
-                    s += "1"
-                    q.append(cur.right)
-                else:
-                    s += "0"
-                    q.append(cur.left)
-            else: 
+        cur = self.root
+        while not cur.leafHuh:
+            if cur.right.leafHuh and cur.left.leafHuh:
                 if cur.right.isPresent(self.id):
                     s += "1"
-                else:
+                    cur = cur.right
+                elif cur.left.isPresent(self.id):
                     s += "0"
-                break
+                    cur = cur.left
+            else:
+                if cur.right.leafHuh:
+                    s += "0"
+                    cur = cur.left
+                else:
+                    s += "1"
+                    cur = cur.right
         return s[::-1]
     
     def __splitParent(self, moveBit : int, parent : treeNode.TreeNode, currentNode : treeNode.TreeNode) -> treeNode.TreeNode:
@@ -55,10 +55,8 @@ class RoutingTable:
         return newRoot
 
     def __generatePath(self, newId : int) -> None:
-        parent = self.root
-        currentNode = parent.left
-        if self.id&1 == 1:
-            currentNode = parent.right
+        parent = None
+        currentNode = self.root
         movementBits = ~(newId^self.id) #0 if bits were not same, else 1
         bitMask = 1
         currentInsertIdBit = newId
@@ -74,6 +72,9 @@ class RoutingTable:
                     currentNode = currentNode.left
             movementBits >>= 1
             currentInsertIdBit >>= 1
+        if currentNode.leafHuh:
+            moveBit = bitMask&currentInsertIdBit
+            parent = self.__splitParent(moveBit^1, parent, currentNode)
         #Current Node at this point will be the node in which after following the appropriate direction down will have the kbucket
         #Essentially this Node represents the longest common suffix of the HashNode id and the inserted id
 

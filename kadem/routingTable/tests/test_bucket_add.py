@@ -14,6 +14,9 @@ def findLongestCommonSuffix(s1 : str, s2 : str) -> str:
 def getNthLastBitStr(num : int, n : int) -> str:
     return bin(1&(num>>n))[2:] #ignore the 0b prefix for binary numbers
 
+def flipNthBit(number, n):
+    return ((~number)&((1<<(n-1))))|((~(1<<(n-1)))&number)
+
 def arbitrary_add(tableId : int, newId : int):
     table = rt.RoutingTable(tableId,3)
     table.insertNewNode(newId)
@@ -28,4 +31,7 @@ def test_bucket_adding():
     arbitrary_add(0b101010101010101010000101010101001010100101000101010101010, 0b10)
     tableId = int.from_bytes(hashlib.sha1("server1".encode()).digest(), "little")
     newId = int.from_bytes(hashlib.sha1("server2".encode()).digest(), "little")
+    arbitrary_add(tableId, newId)
+    tableId = int.from_bytes(hashlib.sha1("gaming".encode()).digest(), "little")
+    newId = flipNthBit(tableId, 160)
     arbitrary_add(tableId, newId)
